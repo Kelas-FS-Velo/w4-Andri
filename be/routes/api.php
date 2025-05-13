@@ -18,9 +18,17 @@ use App\Http\Controllers\AuthController;
 */
 
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('jwt.auth')->post('/logout', [AuthController::class, 'logout']);
-Route::middleware('jwt.auth')->get('/user', [AuthController::class, 'user']);
+// Route::post('/login', [AuthController::class, 'login']);
+// Route::middleware('jwt.auth')->post('/logout', [AuthController::class, 'logout']);
+// Route::middleware('jwt.auth')->get('/user', [AuthController::class, 'user']);
+
+Route::group(['middleware' => 'api','prefix' => 'auth'], function ($router) {
+    
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
+});
 
 Route::get('/profile', [ProfileController::class, 'index']);
 

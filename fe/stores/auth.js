@@ -9,10 +9,11 @@ const error = ref('')
 function loadUser() {
   if (typeof window !== 'undefined') {
     const storedToken = localStorage.getItem('token')
+    const storedUser = localStorage.getItem('user')
     if (storedToken) {
       token.value = storedToken
       try {
-        user.value = jwtDecode(storedToken)
+        user.value = JSON.parse(storedUser)
       } catch (e) {
         user.value = null
       }
@@ -24,15 +25,13 @@ async function login(email, password) {
   error.value = ''
   try {
     const { data } = await axios.post('http://127.0.0.1:8000/api/login', { email, password })
-    token.value = data.token
-    try {
-      user.value = jwtDecode(data.token)
-    } catch (decodeErr) {
-      user.value = null
-      error.value = 'Token JWT tidak valid: ' + decodeErr.message
-      return false
-    }
-    localStorage.setItem('token', data.token)
+    token.value = data.access_token
+    user.value = data.user
+    
+    // Store token in localStorage
+    localStorage.setItem('token', data.access_token)
+    localStorage.setItem('user', JSON.stringify(data.user))
+    
     return true
   } catch (e) {
     if (e.response && e.response.data && e.response.data.error) {

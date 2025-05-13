@@ -104,11 +104,7 @@ function handlePerPage(val) {
 const { data, pending, error } = await useFetch('/api/resources', {
   baseURL: 'http://127.0.0.1:8000',
 });
-const resources = (data?.value?.data && data.value.data.length > 0) ? data.value.data : dummyResources;
-const paginatedResources = computed(() => {
-  const start = (currentPage.value - 1) * perPage.value;
-  return resources.slice(start, start + perPage.value);
-});
+
 const dummyResources = [
   {
     id: 1,
@@ -147,6 +143,11 @@ const dummyResources = [
     metadata: { volume: 3, issue: 1 }
   },
 ];
+const resources = (data?.value?.data && data.value.data.length > 0) ? data.value.data : dummyResources;
+const paginatedResources = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value;
+  return resources.slice(start, start + perPage.value);
+});
 const router = useRouter ? useRouter() : null;
 
 const handleDelete = async (id) => {
